@@ -20,34 +20,46 @@ chokkaku n = [(x, y, z) | x <- [1..n], y <- [1..n], z <- [1..n], x < y, y < z, z
 
 
 -- 5.問2.12.5
--- 1.
-cntelem x xs | elem x xs = 1 + cntelem x (deleteOne x xs)
-             | otherwise = 0
-shuntsu (x:xs) | elem (x+1) xs && elem (x+2) xs = [[x, (x+1), (x+2)]] ++ shuntsu xs
-               | otherwise = shuntsu xs
-
-shuntsu [] = []
-kotsu (x:xs) | cntelem x xs >= 2 = [replicate 3 x] ++ kotsu (deleteOne x (deleteOne x xs))
-             | otherwise = kotsu xs
-
-kotsu [] = []
-toitsu (x:xs) | elem x xs = [replicate 2 x] ++ toitsu (deleteOne x xs)
-              | otherwise = toitsu xs
-
-toitsu [] = []
-
---2.
+-- Data.Listの(\\)を使用
+--
+-- support method
+-- quick sort
 qsort [] = []
 qsort (x:xs) = qsort [y | y <- xs, y< x] ++ x : qsort[y | y <- xs, y >= x]
-makeyaku xs | shuntsu (take 3 xs) /= [] = 1 + makeyaku (myDrop 3 xs)
-            | kotsu (take 3 xs) /= [] = 1 + makeyaku (myDrop 3 xs)
+-- ex.) [1,1,2,3,4,5,5,5,6,7,9] -> [1,2,3,4,5,6,7,9,1,5,5]
+originalsort xs | xs /= (qsort xs) = originalsort (qsort xs)
+                | otherwise = ((nub xs) ++ (xs \\ (nub xs)))
+-- count number in list
+cntelem x xs | elem x xs = 1 + cntelem x (deleteOne x xs)
+             | otherwise = 0
+
+-- 1.
+-- 順子
+shuntsu (x:xs) | elem (x+1) xs && elem (x+2) xs = [[x, (x+1), (x+2)]] ++ shuntsu xs
+               | otherwise = shuntsu xs
+shuntsu [] = []
+-- 刻子
+kotsu (x:xs) | cntelem x xs >= 2 = [replicate 3 x] ++ kotsu (deleteOne x (deleteOne x xs))
+             | otherwise = kotsu xs
+kotsu [] = []
+-- 対子
+toitsu (x:xs) | elem x xs = [replicate 2 x] ++ toitsu (deleteOne x xs)
+              | otherwise = toitsu xs
+toitsu [] = []
+
+-- 2.
+-- 順子と刻子のカウント
+countpair xs | kotsu (take 3 (qsort xs)) /= [] = 1 + countpair (myDrop 3 (qsort xs))
+            | shuntsu (take 3 (originalsort xs)) /= [] = 1 + countpair (myDrop 3 (originalsort xs))
             | otherwise = 0
 
-hantei xs ys | (makeyaku (ys \\ concat (take 1 xs))) == 4 = True
+-- 対子のパターンを用意し，対子をはぶいた手で役が4つ成立しているか確認
+judge xs ys | (countpair (ys \\ concat (take 1 xs))) == 4 = True
              | xs == [] = False
-             | otherwise = hantei (myDrop 1 xs) ys
+             | otherwise = judge (myDrop 1 xs) ys
+-- 清一色
+chinitsu xs = judge (toitsu xs) xs
 
-chinitsu xs = hantei (toitsu xs) xs
 
 -- 6.問3.1.3
 data Tree a = Empty | Branch (Tree a) a (Tree a)

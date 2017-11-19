@@ -1,3 +1,4 @@
+import Data.List
 -- 1.問2.4.10
 deleteOne x [] = []
 deleteOne x (y:ys) = if x == y then ys else [y] ++ deleteOne x ys
@@ -11,7 +12,7 @@ deleteAll x xs = filter(/= x) xs
 -- 3.問2.10.1
 myDrop :: Integer -> [a] -> [a]
 myDrop x (y:ys) = if x == 0 then (y:ys) else myDrop (x - 1) ys
-
+myDrop x [] = []
 
 -- 4.問2.11.3
 chokkaku :: Integer -> [(Integer, Integer, Integer)]
@@ -38,9 +39,16 @@ toitsu [] = []
 --2.
 qsort [] = []
 qsort (x:xs) = qsort [y | y <- xs, y< x] ++ x : qsort[y | y <- xs, y >= x]
--- chinitsu xs | shuntsu xs /= [] shuntsu xs
---             | otherwise = []
--- chinitsu [] = False
+pair_count (x:xs) ys | length (shuntsu (ys \\ x)) /= 0 = 1 + pair_count (shuntsu (ys \\ x)) (ys \\ x)
+                 | length (kotsu (ys \\ x)) /= 0 = 1 + pair_count (kotsu (ys \\ x)) (ys \\ x)
+                 | otherwise = 0
+
+hantei xs ys | pair_count (take 1 xs) ys == 4 = True
+             | otherwise = hantei (myDrop 1 xs) ys
+
+hantei [] _ = False
+chinitsu xs = hantei (toitsu xs) xs
+
 
 -- 6.問3.1.3
 data Tree a = Empty | Branch (Tree a) a (Tree a)

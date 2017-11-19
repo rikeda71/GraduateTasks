@@ -39,16 +39,15 @@ toitsu [] = []
 --2.
 qsort [] = []
 qsort (x:xs) = qsort [y | y <- xs, y< x] ++ x : qsort[y | y <- xs, y >= x]
-pair_count (x:xs) ys | length (shuntsu (ys \\ x)) /= 0 = 1 + pair_count (shuntsu (ys \\ x)) (ys \\ x)
-                 | length (kotsu (ys \\ x)) /= 0 = 1 + pair_count (kotsu (ys \\ x)) (ys \\ x)
-                 | otherwise = 0
+makeyaku xs | shuntsu (take 3 xs) /= [] = 1 + makeyaku (myDrop 3 xs)
+            | kotsu (take 3 xs) /= [] = 1 + makeyaku (myDrop 3 xs)
+            | otherwise = 0
 
-hantei xs ys | pair_count (take 1 xs) ys == 4 = True
+hantei xs ys | (makeyaku (ys \\ concat (take 1 xs))) == 4 = True
+             | xs == [] = False
              | otherwise = hantei (myDrop 1 xs) ys
 
-hantei [] _ = False
 chinitsu xs = hantei (toitsu xs) xs
-
 
 -- 6.問3.1.3
 data Tree a = Empty | Branch (Tree a) a (Tree a)

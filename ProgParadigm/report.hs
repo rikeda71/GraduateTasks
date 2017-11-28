@@ -35,7 +35,7 @@ cntelem x xs | elem x xs = 1 + cntelem x (deleteOne x xs)
 
 -- 1.
 -- 順子
-shuntsu (x:xs) | elem (x+1) xs && elem (x+2) xs = [[x, (x+1), (x+2)]] ++ shuntsu xs
+shuntsu (x:xs) | elem (x+1) xs && elem (x+2) xs = nub ([[x, (x+1), (x+2)]] ++ shuntsu xs)
                | otherwise = shuntsu xs
 shuntsu [] = []
 -- 刻子

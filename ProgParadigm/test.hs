@@ -1,3 +1,14 @@
+--2017
+--I
+--(1)
+foo2017 (x:xs) | mod x 3 == 0 = 1 + foo2017 xs
+               | otherwise = foo2017 xs
+foo2017 [] = 0
+--(2)
+bar2017 n = [(i,j) | i <- [1..n], j <- [i..n], mod (i * j) 12 == 0]
+--II
+take 8 (map (\ (x,y) -> x) ((iterate (\ (x,y) -> (y, x+y)) (0,1))))
+
 --2016
 --(1)
 foo2016 :: [Integer] -> Bool

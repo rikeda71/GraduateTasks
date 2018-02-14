@@ -1,26 +1,26 @@
 grandchild(X, Z) :- child(X, Y), child(Y, Z).
 
 % クロノスとレアの子供
-child(Hestia, Kronos).
-child(Demeter, Kronos).
-child(Hera, Kronos).
-child(Hades, Kronos).
-child(Poseidon, Kronos).
-child(Zeus, Kronos).
+child(hestia, kronos).
+child(demeter, kronos).
+child(hera, kronos).
+child(hades, kronos).
+child(poseidon, kronos).
+child(zeus, kronos).
 
 % ゼウスの子供
-child(Athena, Zeus).
-child(Apollon, Zeus).
-child(Artemis, Zeus).
-child(Ares, Zeus).
-child(Hephaistos, Zeus).
-child(Dionysus, Zeus).
-child(Perseus, Zeus).
-child(Hercules, Zeus).
-child(Minos, Zeus).
-child(Persephone, Zeus).
-child(Helene, Zeus).
-child(Aglaia, Zeus).
-child(Euphrosyne, Zeus).
-child(Thalia, Zeus).
+child(athena, zeus).
+child(apollon, zeus).
+child(artemis, zeus).
+child(ares, zeus).
+child(hephaistos, zeus).
+child(dionysus, zeus).
+child(perseus, zeus).
+child(hercules, zeus).
+child(minos, zeus).
+child(persephone, zeus).
+child(helene, zeus).
+child(aglaia, zeus).
+child(euphrosyne, zeus).
+child(thalia, zeus).
 

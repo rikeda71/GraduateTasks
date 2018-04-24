@@ -49,6 +49,7 @@ def main():
         if abs(func1(x[0], x[1])) < e and abs(func2(x[0], x[1])) < e:
             break
         i += 1
+
     # 最終結果の出力
     print(func1(x[0], x[1]))
     print(func2(x[0], x[1]))

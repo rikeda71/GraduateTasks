@@ -17,8 +17,9 @@ def diff_function(x: float):
 
 def main():
     e = 0.001
-    x = -3.0
-    # x = 1.0
+    # -3や1を入力
+    print("初期値を入力")
+    x = int(input())
     i = 0
     while abs(function(x)) > e:
         print("x" + str(i) + ":" + str(x))
@@ -33,7 +34,7 @@ def main():
     plt.title("x^3 + 2x^2 - 5x +6(-5 <= x <= 3)")
     plt.xlabel("x")
     plt.ylabel("y")
-    plt.savefig('figure.png')
+    plt.savefig("figure.png")
 
 
 if __name__ == "__main__":

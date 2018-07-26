@@ -118,7 +118,6 @@ void release()
 int main(int argc, char *argv[])
 {
     int N;    // size of ring buffer
-    int n;    // The number of production and consumption numbers
     int l;    // The number of values produced by one producer process
     int L;    // size of producer processes
     int m;    // The number of values consumed by one consumer process
@@ -136,7 +135,6 @@ int main(int argc, char *argv[])
         exit(1);
     }
     N = atoi(argv[1]);
-    // n = atoi(argv[2]);
     l = atoi(argv[2]);
     L = atoi(argv[3]);
     m = atoi(argv[4]);

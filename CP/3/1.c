@@ -1,29 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <time.h>
+
+// Matrixes
+int *A, *B;
+// the number of threads
+int n;
 
 typedef struct {
-    int *A_rows;
-    int *B_columns;
-    int size;
+    int A_rows;
+    int B_columns;
 } Matrix_elem;
 
-int multi_mat_elem(Matrix_elem m) {
+void multi_mat_elem(Matrix_elem *m) {
     int i;
     int sum = 0;
-    for (i = 0; i < m.size; i++){
-        sum += m.A_rows[i] * m.B_columns[i];
+    for (i = 0; i < n; i++){
+        sum += A[m->A_rows * n + i] * B[m->B_columns + i * n];
     }
-    return sum;
+    // printf("A_rows: %d, B_columns: %d, sum:%d\n", m->A_rows, m->B_columns, sum);
+    pthread_exit(m);
 }
 
 int main(int argc, char *argv[]) {
 
-    int i, j;
-    int n;
+    int i, j, k = 0;
+    int pos;
     int threadnum;
+    int *status;
     Matrix_elem *m;
     pthread_t *threads;
+    struct timespec t_s, t_e;
+    long double s, ns;
 
     if (argc < 3) {
         fprintf(stderr, "argv[1] = size of matrixes, argv[2] = the number of thread");
@@ -33,46 +42,57 @@ int main(int argc, char *argv[]) {
     n = atoi(argv[1]);
     threadnum = atoi(argv[2]);
 
-    printf("%d %d\n", n, threadnum);
+    printf("column, rows = %d number of threads = %d\n", n, threadnum);
 
     // ensure memories
-    m = malloc(sizeof(Matrix_elem) * n);
+    printf("ensure memories\n");
+    m = malloc(sizeof(Matrix_elem) * n * n);
+    A = malloc(sizeof(int) * n * n);
+    B = malloc(sizeof(int) * n * n);
 
-    if (m == NULL) {
+    if (m == NULL || A == NULL || B == NULL) {
         fprintf(stderr, "don't ensure memories");
         exit(2);
     }
 
     for (i = 0; i < n; i++) {
-        m[i].A_rows = malloc(sizeof(int) * n);
-        m[i].B_columns = malloc(sizeof(int) * n);
         for (j = 0; j < n; j++) {
-            m[i].A_rows[j] = rand() % 10 + 1;
-            m[i].B_columns[j] = rand() % 10 + 1;
+            pos = i * n + j;
+            A[pos] = rand() % 10 + 1;
+            B[pos] = rand() % 10 + 1;
+            m[pos].A_rows = i;
+            m[pos].B_columns = j;
         }
     }
 
+    // assign to threads
+    clock_gettime(CLOCK_REALTIME, &t_s);
+    printf("assign to threads\n");
+    threads = malloc(sizeof(pthread_t) * threadnum);
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
-            printf("i: %d, j: %d\n", i, j);
-            printf("A:%d B:%d\n", m[i].A_rows[j], m[i].B_columns[j]);
+            pthread_create(&threads[k], NULL, (void *)multi_mat_elem, &m[i * n + j]);
+            if (++k == threadnum) {
+                // calc
+                for (k = 0; k < threadnum; k++) {
+                    pthread_join(threads[k], (void **)&status);
+                    // printf("Finish thread %d with return value %d\n", k, *status);
+                }
+                k = 0;
+            }
         }
     }
-
-    threads = (pthread_t *)malloc(threadnum);
-
-    /*
-    for (i = 0; i < threadnum; i++) {
-        pthread_create(&threads[i], NULL, (int (*))multi_mat_elem, info)
-    }
-    */
+    clock_gettime(CLOCK_REALTIME, &t_e);
+    s = (t_e.tv_sec - t_s.tv_sec);
+    ns = (long double)(t_e.tv_nsec - t_s.tv_nsec);
+    s += ns * 10e-10;
+    printf("real time: %Lf\n", s);
+    printf("%ld\n", t_e.tv_sec - t_s.tv_sec);
+    printf("%ld\n", t_e.tv_nsec - t_s.tv_nsec);
 
     // decolonize memories
-    printf("aaa");
-    for (i = 0; i < n; i++) {
-        free(m[i].A_rows);
-        free(m[i].B_columns);
-    }
+    free(A);
+    free(B);
     free(m);
     free(threads);
 }

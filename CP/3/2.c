@@ -69,10 +69,10 @@ void consumer(Agent *a)
 {
     int rnd;
     int cons_No = a->no;
-    int cnum = a->num;
+    int pnum = a->num;
 
     printf("I am consuer process.\n");
-    for (; cnum; cnum--) {
+    for (; pnum; pnum--) {
         // pick number from ring buffer
         while (1) {
             pthread_mutex_lock(&lock_status);
@@ -115,6 +115,7 @@ int main(int argc, char *argv[])
     Agent *cons_agent;
     struct timespec t_s, t_e;
     long double s, ns;
+    struct ringbuf rbuf_base[1];
 
     if (argc < 6) {
         fprintf(stderr, "Usage: %s N n\n", argv[0]);
@@ -147,11 +148,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    rbuf = (struct ringbuf *)malloc(sizeof(struct ringbuf));
-    if (rbuf == NULL) {
-        perror("malloc rbuf");
-        exit(1);
-    }
+    rbuf = rbuf_base;
     rbuf->bufsize = N;
     rbuf->n_item = 0;
     rbuf->wptr = rbuf->rptr = 0;
@@ -187,22 +184,15 @@ int main(int argc, char *argv[])
         pthread_join(cons_threads[pnum], (void **)&status);
     }
 
-    printf("end...\n");
     clock_gettime(CLOCK_REALTIME, &t_e);
     s = (t_e.tv_sec - t_s.tv_sec);
     ns = (long double)(t_e.tv_nsec - t_s.tv_nsec);
     s += ns * 10e-10;
     printf("real time: %Lf\n", s);
     // free memories
-    puts("prod_threads");
     free(prod_threads);
-    puts("cons_threads");
     free(cons_threads);
-    puts("prod_agent");
     free(prod_agent);
-    puts("cons_agent");
     free(cons_agent);
-    puts("rbuf");
-    free(rbuf);
     return 0;
 }

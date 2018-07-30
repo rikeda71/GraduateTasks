@@ -33,6 +33,8 @@ int main(int argc, char *argv[]) {
     pthread_t *threads;
     struct timespec t_s, t_e;
     long double s, ns;
+    struct timespec c;
+    long double cs;
 
     if (argc < 3) {
         fprintf(stderr, "argv[1] = size of matrixes, argv[2] = the number of thread");
@@ -42,10 +44,9 @@ int main(int argc, char *argv[]) {
     n = atoi(argv[1]);
     threadnum = atoi(argv[2]);
 
-    printf("column, rows = %d number of threads = %d\n", n, threadnum);
+    // printf("column, rows = %d number of threads = %d\n", n, threadnum);
 
     // ensure memories
-    printf("ensure memories\n");
     m = malloc(sizeof(Matrix_elem) * n * n);
     A = malloc(sizeof(int) * n * n);
     B = malloc(sizeof(int) * n * n);
@@ -67,7 +68,6 @@ int main(int argc, char *argv[]) {
 
     // assign to threads
     clock_gettime(CLOCK_REALTIME, &t_s);
-    printf("assign to threads\n");
     threads = malloc(sizeof(pthread_t) * threadnum);
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
@@ -76,19 +76,18 @@ int main(int argc, char *argv[]) {
                 // calc
                 for (k = 0; k < threadnum; k++) {
                     pthread_join(threads[k], (void **)&status);
-                    // printf("Finish thread %d with return value %d\n", k, *status);
                 }
                 k = 0;
             }
         }
     }
     clock_gettime(CLOCK_REALTIME, &t_e);
+    clock_gettime(CLOCK_THREAD_CPUTIME_ID, &c);
     s = (t_e.tv_sec - t_s.tv_sec);
     ns = (long double)(t_e.tv_nsec - t_s.tv_nsec);
     s += ns * 10e-10;
-    printf("real time: %Lf\n", s);
-    printf("%ld\n", t_e.tv_sec - t_s.tv_sec);
-    printf("%ld\n", t_e.tv_nsec - t_s.tv_nsec);
+    cs = c.tv_sec + c.tv_nsec * 10e-10;
+    printf("%Lf,%Lf\n", s, cs);
 
     // decolonize memories
     free(A);

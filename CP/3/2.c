@@ -114,7 +114,8 @@ int main(int argc, char *argv[])
     Agent *prod_agent;
     Agent *cons_agent;
     struct timespec t_s, t_e;
-    long double s, ns;
+    struct timespec c;
+    long double s, ns, cs;
     struct ringbuf rbuf_base[1];
 
     if (argc < 6) {
@@ -185,10 +186,13 @@ int main(int argc, char *argv[])
     }
 
     clock_gettime(CLOCK_REALTIME, &t_e);
+    clock_gettime(CLOCK_THREAD_CPUTIME_ID, &c);
     s = (t_e.tv_sec - t_s.tv_sec);
     ns = (long double)(t_e.tv_nsec - t_s.tv_nsec);
     s += ns * 10e-10;
-    printf("real time: %Lf\n", s);
+    cs = c.tv_sec + c.tv_nsec * 10e-10;
+    // printf("real time: %Lf\n", s);
+    printf("%Lf, %Lf\n", s, cs);
     // free memories
     free(prod_threads);
     free(cons_threads);

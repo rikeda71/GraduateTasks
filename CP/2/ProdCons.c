@@ -140,6 +140,8 @@ int main(int argc, char *argv[])
     int status;
     int pnum, nid;
     int pmap[MAXPROC], cmap[MAXPROC];
+    struct timespec t_s, t_e, c;
+    long double s, ns, cs;
 
     if (argc < 6) {
         fprintf(stderr, "Usage: %s N n\n", argv[0]);
@@ -183,6 +185,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    clock_gettime(CLOCK_REALTIME, &t_s);
     // create consumer
     n_cons = 0;
     while(n_cons < M) {
@@ -258,5 +261,12 @@ int main(int argc, char *argv[])
         printf("Illegal process ID %d\n", pid);
     }
     release();
+    clock_gettime(CLOCK_REALTIME, &t_e);
+    clock_gettime(CLOCK_THREAD_CPUTIME_ID, &c);
+    s = (t_e.tv_sec - t_s.tv_sec);
+    ns = (long double)(t_e.tv_nsec - t_s.tv_nsec);
+    s += ns * 10e-10;
+    cs = c.tv_sec + c.tv_nsec * 10e-10;
+    printf("%Lf,%Lf\n", s, cs);
     return 0;
 }

@@ -10,7 +10,7 @@ char rsp[3] = {'r', 's', 'p'};
 int judge_val[3] = {9, 2, 4};
 
 void janken_cpu(int *janken) {
-    srand(pthread_self());
+    srand((unsigned)time(NULL) * pthread_self());
     *janken = genrnd(0, 2);
 }
 

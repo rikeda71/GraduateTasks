@@ -6,7 +6,7 @@
 #define genrnd(mn, mx) (rand() % ((mx)-(mn)+1) + (mn))
 
 
-char rsp[3] = {'r', 's', 'p'};
+char rsp[3][10] = {"rock", "scissors", "paper"};
 int judge_val[3] = {9, 2, 4};
 
 void janken_cpu(int *janken) {
@@ -29,7 +29,6 @@ int janken_judge(int *janken, int n) {
 
     // ビット演算でどの手が出されたかを調査
     for (i = 0; i < n; i++) {
-        printf("janken:%d\n", janken[i]);
         judge |= judge_val[janken[i]];
     }
     // 格納したビットと1つ右シフトしたビットを＆演算
@@ -37,25 +36,26 @@ int janken_judge(int *janken, int n) {
     if (judge == 7 || judge == 0) {
         result = 1;
         printf("引き分けです\n");
-        for (i = 0; i < n; i++) {
-            printf("%c\n", rsp[janken[i]]);
+        printf("player:%s\n", rsp[janken[0]]);
+        for (i = 1; i < n; i++) {
+            printf("cpu%d:%s\n", i, rsp[janken[i]]);
         }
     }
     else {
         result = 0;
         judge = judge == 1 ? 9 : judge;
         if (judge_val[janken[0]] == judge) {
-            printf("%cでplayerは勝ちです\n", rsp[janken[0]]);
+            printf("%sでplayerは勝ちです\n", rsp[janken[0]]);
         }
         else {
-            printf("%cでplayerは負けです\n", rsp[janken[0]]);
+            printf("%sでplayerは負けです\n", rsp[janken[0]]);
         }
         for(i = 1; i < n; i++) {
             if (judge_val[janken[i]] == judge) {
-                printf("%cでcpu%dは勝ちです\n", rsp[janken[i]], i);
+                printf("%sでcpu%dは勝ちです\n", rsp[janken[i]], i);
             }
             else {
-                printf("%cでcpu%dは負けです\n", rsp[janken[i]], i);
+                printf("%sでcpu%dは負けです\n", rsp[janken[i]], i);
             }
         }
     }

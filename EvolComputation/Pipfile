@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 kiwisolver = "==1.0.1"
 matplotlib = "==2.2.2"
-numpy = "==1.14.2"
+numpy = "==1.14.4"
 pyparsing = "==2.2.0"
 python-dateutil = "==2.7.2"
 pytz = "==2018.4"
